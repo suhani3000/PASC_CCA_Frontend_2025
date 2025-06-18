@@ -95,7 +95,7 @@ export default function Login() {
         {/* Illustration Section */}
         <div className="w-full sm:w-1/2 bg-pure-white dark:bg-blue-light flex items-center justify-center p-4 sm:p-6 min-h-[200px] sm:min-h-full">
           <Image
-            src="/login3.png"
+            src="/login.png"
             alt="Login Illustration"
             width={300}
             height={300}
