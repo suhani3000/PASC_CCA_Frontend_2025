@@ -25,13 +25,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Navbar />
-          {children}
+          <div className="pt-2">
+            {children}
+          </div>
         </body>
       </ThemeProvider>
     </html>

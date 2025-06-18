@@ -2,26 +2,16 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { RoleToggle } from '../../../../components/RoleToggle'
 import { Eye, EyeOff } from 'lucide-react'
 
-export default function Login() {
-  const [role, setRole] = useState<string>('student')
-  const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
+export default function VerifyResetPassword() {
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const handleRoleChange = (selectedRole: string): void => {
-    setRole(selectedRole)
-  }
-
-  const togglePasswordVisibility = (): void => {
-    setShowPassword(!showPassword)
-  }
-
-  const isFormFilled: boolean = email.trim() !== '' && password.trim() !== ''
+  const isFormFilled = newPassword.trim() !== '' && confirmPassword.trim() !== ''
 
   return (
     <div className="flex-1 flex items-center justify-center p-4 sm:p-6 -mt-6">
@@ -36,42 +26,43 @@ export default function Login() {
           <div className="lg:max-w-sm mx-auto w-full">
             <div className="mb-6">
               <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: 'var(--color-blue-500)' }}>
-                Login
+                Reset Password
               </h2>
-              <p className="text-sm sm:text-base text-secondary mt-2">
-                Sign in to access your account
-              </p>
             </div>
-            <RoleToggle onRoleChange={handleRoleChange} />
             <div className="space-y-4 sm:space-y-5">
-              <input
-                type="email"
-                placeholder="Email"
-                className="input-field text-sm sm:text-base w-full"
-                value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-              />
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  className="input-field pr-10 text-sm sm:text-base w-full"
-                  value={password}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                  type={showNewPassword ? 'text' : 'password'}
+                  placeholder="New Password"
+                  className="input-field text-sm sm:text-base w-full pr-10"
+                  value={newPassword}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
                   style={{ color: 'var(--color-gray-500)', '--hover-color': 'var(--color-blue-500)' } as React.CSSProperties}
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              <div className="flex justify-end">
-                <Link href="/auth/reset-password" className="link-text text-xs sm:text-sm">
-                  Forgot Password?
-                </Link>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="Confirm Password"
+                  className="input-field text-sm sm:text-base w-full pr-10"
+                  value={confirmPassword}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  style={{ color: 'var(--color-gray-500)', '--hover-color': 'var(--color-blue-500)' } as React.CSSProperties}
+                >
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
               <button
                 disabled={!isFormFilled}
@@ -81,22 +72,16 @@ export default function Login() {
                     : 'bg-blue-200-bg cursor-not-allowed'
                 }`}
               >
-                Login
+                Reset Password
               </button>
-              <p className="text-center text-secondary text-xs sm:text-sm">
-                Don't have an account?{' '}
-                <Link href="/auth/signup" className="link-text">
-                  Sign Up
-                </Link>
-              </p>
             </div>
           </div>
         </div>
         {/* Illustration Section */}
         <div className="w-full sm:w-1/2 bg-pure-white dark:bg-blue-light flex items-center justify-center p-4 sm:p-6 min-h-[200px] sm:min-h-full">
           <Image
-            src="/login3.png"
-            alt="Login Illustration"
+            src="/otp.png"
+            alt="Verify Reset Password Illustration"
             width={300}
             height={300}
             className="object-contain max-h-[50vh] sm:max-h-full sm:h-full sm:w-full"

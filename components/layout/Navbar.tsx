@@ -1,22 +1,33 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sun, Moon, User } from "lucide-react";
 import ThemeSwitcher from "./ThemeSwitcher";
 
 const Navbar = () => {
+  const pathname = usePathname();
+  const isAuthRoute = pathname.startsWith('/auth');
+
+  if (isAuthRoute) {
+    return (
+      <div className="flex justify-between items-center px-6 pt-6 pb-2">
+        <Image src="/logo.png" width={120} height={80} alt="logo" priority />
+        <ThemeSwitcher />
+      </div>
+    );
+  }
+
   return (
     <nav className="w-full">
-      <div className="flex justify-between mx-auto shadow-xl  px-5 py-2">
+      <div className="flex justify-between mx-auto shadow-xl px-5 py-2">
         <div className="flex items-center">
           <Image src="/logo.png" width={120} height={80} alt="logo" priority />
         </div>
         <div className="flex items-center gap-6">
           <ThemeSwitcher />
-
-          <div className="bg-profile  p-2 rounded-full">
+          <div className="bg-profile p-2 rounded-full">
             <User className="h-8 w-8 p-0.5" />
           </div>
         </div>

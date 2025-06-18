@@ -7,14 +7,27 @@
     --color-card: #ffffff;
     --color-profile: #d4d7db;
     --color-border: #e1e1e1;
+    --color-faint-blue: #f5faff; /* Very faint blue for form section in light mode */
+    --color-pure-white: #ffffff; /* Pure white for illustration section in light mode */
 
     /* text colors */
     --color-text-primary: #000000;
     --color-text-secondary: #897d7d;
+    --color-foreground: #000000;
+    --color-blue-500: #3b82f6; /* Blue for text and button background */
+    --color-gray-500: #6b7280; /* Gray for eye icon in light mode */
+    --color-gray-400: #9ca3af; /* Gray for eye icon in dark mode */
 
     /* buttons colors */
     --color-button-rsvp: #3579b1;
     --color-button-disabled: #e5e7eb;
+    --color-blue-500-bg: #3b82f6; /* Button enabled background */
+    --color-blue-600-bg: #2563eb; /* Button hover background */
+    --color-blue-200-bg: #bfdbfe; /* Button disabled background */
+
+    /* illustration background colors */
+    --color-blue-light: #e6f0fa;
+    --color-blue-dark: #1e3a8a;
   }
 
   .dark {
@@ -23,14 +36,27 @@
     --color-card: #030c20;
     --color-profile: #253550;
     --color-border: #5f5e64;
+    --color-faint-blue: #030c20; /* Keep dark theme unchanged, match --color-card */
+    --color-pure-white: #1f2937; /* Keep dark theme unchanged, match --color-blue-light */
 
     /* text colors */
     --color-text-primary: #ffffff;
     --color-text-secondary: #897d7d;
+    --color-foreground: #ffffff;
+    --color-blue-500: #3b82f6; /* Keep same blue for consistency */
+    --color-gray-500: #6b7280; /* Keep same gray for consistency */
+    --color-gray-400: #9ca3af; /* Gray for eye icon in dark mode */
 
     /* buttons */
     --color-button-rsvp: #004177;
     --color-button-disabled: #1e293b;
+    --color-blue-500-bg: #3b82f6; /* Button enabled background */
+    --color-blue-600-bg: #2563eb; /* Button hover background */
+    --color-blue-200-bg: #bfdbfe; /* Button disabled background */
+
+    /* illustration background colors */
+    --color-blue-light: #1f2937; /* Unchanged, dark gray for better contrast */
+    --color-blue-dark: #e6f0fa;
   }
 
   body {
@@ -49,15 +75,27 @@
   .bg-card {
     background-color: var(--color-card);
   }
+
+  .bg-faint-blue {
+    background-color: var(--color-faint-blue);
+  }
+
+  .bg-pure-white {
+    background-color: var(--color-pure-white);
+  }
+
   .bg-profile {
     background-color: var(--color-profile);
   }
+
   .text-primary {
     color: var(--color-text-primary);
   }
+
   .text-secondary {
     color: var(--color-text-secondary);
   }
+
   .border-card {
     border-color: var(--color-border);
   }
@@ -68,5 +106,69 @@
 
   .bg-button-disabled {
     background-color: var(--color-button-disabled);
+  }
+
+  .bg-blue-light {
+    background-color: var(--color-blue-light);
+  }
+
+  .bg-blue-dark {
+    background-color: var(--color-blue-dark);
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-card);
+    color: var(--color-text-primary);
+    transition: all 0.3s;
+  }
+
+  .input-field::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+
+  .auth-button {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--color-button-rsvp);
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .auth-button:hover {
+    background-color: #1d4ed8;
+  }
+
+  .link-text {
+    color: #2563eb;
+    transition: all 0.3s;
+  }
+
+  .link-text:hover {
+    text-decoration: underline;
+  }
+
+  .dark .link-text {
+    color: #60a5fa;
+  }
+
+  /* Support for custom hover color variable */
+  [style*="--hover-color"] {
+    transition: color 0.2s;
+  }
+
+  [style*="--hover-color"]:hover {
+    color: var(--hover-color) !important;
   }
 }
