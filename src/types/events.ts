@@ -1,5 +1,5 @@
 export type Event = {
-    id: number;
+  id: number;
   title: string;
   status: "Upcoming" | "Completed" | "Ongoing";
   description: string;
@@ -9,7 +9,7 @@ export type Event = {
   endDate: string;
   creditHours: string;
   rsvpStatus: "not_rsvped" | "rsvped" | "disabled";
-  aboutEvent?: string;      // Detailed description for "About Event" section
-  prerequisites?: string;   // Prerequisites text
-  contact?: string;        
+  aboutEvent?: string; // Detailed description for "About Event" section
+  prerequisites?: string; // Prerequisites text
+  contact?: string;
 };
