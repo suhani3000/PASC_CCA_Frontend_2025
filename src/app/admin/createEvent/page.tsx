@@ -14,7 +14,8 @@ import {
   Clock,
   FileText,
   Sparkles,
-  Plus
+  Plus,
+  ArrowLeft
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -145,6 +146,19 @@ const Page: React.FC = () => {
       </div>
       
       <div className="relative container mx-auto px-4 py-8 max-w-5xl">
+        {/* Navigation Header */}
+        <div className="mb-6">
+          <button 
+            className={`flex items-center text-blue-600 hover:text-blue-800 transition-colors ${
+              isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'
+            }`}
+            onClick={() => router.push('/admin/dashboard')}
+          >
+            <ArrowLeft className="w-5 h-5 mr-1" />
+            <span>Back to Dashboard</span>
+          </button>
+        </div>
+
         {/* Animated Header */}
         <div className={`rounded-2xl shadow-2xl mb-8 overflow-hidden backdrop-blur-xl border transition-all duration-300 hover:shadow-3xl ${
           isDarkMode 

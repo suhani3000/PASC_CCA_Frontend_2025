@@ -1,10 +1,11 @@
 'use client';
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Clock, MapPin, Phone } from "lucide-react";
+import { Calendar, Clock, MapPin, Phone, ArrowLeft } from "lucide-react";
 import { getStatusBadgeVariant, getStatusColor } from "@/lib/utils";
 import axios from "axios";
 import { EventAttendanceSessionForUser } from "@/types/attendance";
@@ -27,6 +28,7 @@ export default function EventDetailPage({
 }: {
   params: Promise<{ id: number }>;
 }) {
+  const router = useRouter();
   const [event, setEvent] = useState<EventAttendanceSessionForUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -133,6 +135,17 @@ export default function EventDetailPage({
 
   return (
     <div className="max-w-7xl w-full mx-auto px-4 py-8">
+      {/* Navigation Header */}
+      <div className="flex items-center space-x-4 mb-6">
+        <button 
+          className="flex items-center text-blue-600 hover:text-blue-800"
+          onClick={() => router.push('/student/events')}
+        >
+          <ArrowLeft className="w-5 h-5 mr-1" />
+          <span>Back to Events</span>
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
@@ -316,17 +329,6 @@ export default function EventDetailPage({
                   <p className="text-gray-600 text-sm">{eventDetails?.contact}</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* RSVP Button */}
-          <Card className="border-none shadow-sm hover:shadow-lg transition-shadow duration-200">
-            <CardContent>
-              <Button
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors duration-200"
-              >
-                RSVP to Event
-              </Button>
             </CardContent>
           </Card>
         </div>
