@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User as UserIcon, BadgeCheck, Clock, Star, BookOpen } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, User as UserIcon, BadgeCheck, Clock, Star, BookOpen } from "lucide-react";
 import { ProfileCard } from "../../../../components/profile/ProfileCard";
 import { StatCard } from "../../../../components/profile/StatCard";
 import { ProgressStatCard } from "../../../../components/profile/ProgressStatCard";
@@ -49,6 +50,7 @@ function useDashboardData(dummyDashboardData: UserAttendanceStats) {
 }
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("dashboard");
 
   // Dummy dashboard data matching UserAttendanceStats
@@ -130,6 +132,17 @@ export default function ProfilePage() {
         className="mx-auto flex flex-col gap-6"
         style={{ height: "calc(100vh - 80px)", overflowY: "auto" }}
       >
+        {/* Navigation Header */}
+        <div className="flex items-center space-x-4 mb-4">
+          <button 
+            className="flex items-center text-blue-600 hover:text-blue-800"
+            onClick={() => router.push('/student/events')}
+          >
+            <ArrowLeft className="w-5 h-5 mr-1" />
+            <span>Back to Events</span>
+          </button>
+        </div>
+
         {/* Top: Profile Card + Stat Cards */}
         <div className="flex flex-col lg:flex-row gap-6">
           {user ? (

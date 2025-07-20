@@ -24,9 +24,6 @@ export const EventsTab = ({ eventsWithRsvp }: { eventsWithRsvp: EventWithRsvp[] 
       case 'completed':
         filteredEvents = filterEvents('COMPLETED');
         break;
-      case 'my-events':
-        filteredEvents = eventsWithRsvp.filter(e => e.rsvp);
-        break;
       default:
         filteredEvents = eventsWithRsvp;
     }
@@ -69,12 +66,6 @@ export const EventsTab = ({ eventsWithRsvp }: { eventsWithRsvp: EventWithRsvp[] 
             >
               Completed
             </TabsTrigger>
-            <TabsTrigger 
-              value="my-events" 
-              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200"
-            >
-              My Events
-            </TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="all-events" className="mt-0">
@@ -88,9 +79,6 @@ export const EventsTab = ({ eventsWithRsvp }: { eventsWithRsvp: EventWithRsvp[] 
         </TabsContent>
         <TabsContent value="completed" className="mt-0">
           {getTabContent('completed')}
-        </TabsContent>
-        <TabsContent value="my-events" className="mt-0">
-          {getTabContent('my-events')}
         </TabsContent>
       </Tabs>
     </div>
