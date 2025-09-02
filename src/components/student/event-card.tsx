@@ -6,7 +6,7 @@ import { Calendar, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
 import { getStatusBadgeVariant, getStatusColor } from "@/lib/utils";
 import axios from "axios";
-
+import {apiUrl} from "@/lib/utils";
 // Event Card Component
 export const EventCard = ({ eventWithRsvp }: { eventWithRsvp: EventWithRsvp }) => {
 
@@ -15,7 +15,7 @@ export const EventCard = ({ eventWithRsvp }: { eventWithRsvp: EventWithRsvp }) =
       const token = localStorage.getItem('token')
       console.log(token)
       const response = await axios.post(
-        'http://localhost:4000/api/rsvps/',
+        `${apiUrl}/rsvps/`,
         {
           eventId: eventWithRsvp.event.id,
           status: 'ATTENDING'
@@ -40,11 +40,11 @@ export const EventCard = ({ eventWithRsvp }: { eventWithRsvp: EventWithRsvp }) =
       const token = localStorage.getItem('token')
       console.log(token)
       const response = await axios.delete(
-        `http://localhost:4000/api/rsvps/${eventWithRsvp.rsvp.id}`,
+        `${apiUrl}/rsvps/${eventWithRsvp.rsvp.id}`,
         {
           headers: {
-            'Content-Type': 'application/json',
-            'authorization': `Bearer ${token}`
+        'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`
           }
         }
       );

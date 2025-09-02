@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-
+import { apiUrl } from "@/lib/utils";
 interface FormData {
   title: string;
   description: string;
@@ -101,7 +101,7 @@ const Page: React.FC = () => {
       console.log("📦 Payload being sent to backend:", payload); 
 
       try{
-        const res = await axios.post('http://localhost:4000/api/events' ,payload ,{
+        const res = await axios.post(`${apiUrl}/events` ,payload ,{
           headers: { 'Content-Type': 'application/json' , 'Authorization': `Bearer ${localStorage.getItem('token')}`},
         });
       }catch(err:any)

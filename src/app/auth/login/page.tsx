@@ -7,8 +7,7 @@ import { RoleToggle } from "@/components/auth/RoleToggle";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useAuthStore } from "@/lib/store";
-
-
+import { apiUrl } from "@/lib/utils";
 
 export default function Login() {
   const [role, setRole] = useState<string>("student");
@@ -35,8 +34,8 @@ export default function Login() {
 
     const endpoint =
       role === "admin"
-        ? "http://localhost:4000/api/auth/admin/login"
-        : "http://localhost:4000/api/auth/user/login";
+        ? `${apiUrl}/auth/admin/login`
+        : `${apiUrl}/auth/user/login`;
 
     try {
       const res = await axios.post(endpoint, { email, password });

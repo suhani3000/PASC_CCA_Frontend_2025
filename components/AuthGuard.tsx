@@ -7,6 +7,7 @@ import { useStore } from 'zustand';
 import { useAuthStore } from '@/lib/store';
 import axios from 'axios';
 import { headers } from 'next/headers';
+import { apiUrl } from '@/lib/utils';
 export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -24,7 +25,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
             if (pathname.startsWith('/admin')) {
                 try {
                     console.log("reached here")
-                    const response = await axios.get('http://localhost:4000/api/auth/admin/me',
+                    const response = await axios.get(`${apiUrl}/auth/admin/me`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -41,7 +42,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
                 }
             } else if (pathname.startsWith('/student')) {
                 try {
-                    const response = await axios.get('http://localhost:4000/api/auth/user/me' ,
+                    const response = await axios.get(`${apiUrl}/auth/user/me`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -53,6 +54,7 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
                         setAuth({ user: data.data, admin: undefined, role: "student" });
                     }
                 } catch (err) {
+                    console.log(err);
                     router.replace('/auth/login');
                 }
             }
