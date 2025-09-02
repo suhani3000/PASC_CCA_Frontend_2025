@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Event, EventFor, EventWithRsvp } from "@/types/events";
-
+import { apiUrl } from "@/lib/utils";
 function formatDateToDDMMYY(dateString: string): string {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -25,7 +25,7 @@ export function useFetchEventsForAdmin() {
             try {
                 let res;
                 const token = localStorage.getItem('token');
-                res = await axios.get("http://localhost:4000/api/events/");
+                res = await axios.get(`${apiUrl}/events/`);
                 console.log(res.data.data.events);
                 const formattedEvents = (res.data.data.events || []).map((event: any) => ({
                     ...event,
@@ -60,9 +60,9 @@ export function useFetchEventsForStudentRsvp() {
             try {
                 let res;
                 const token = localStorage.getItem('token');
-                res = await axios.get("http://localhost:4000/api/events/user/" , {
-                    headers : {
-                        'Authorization' : `Bearer ${token}`
+                res = await axios.get(`${apiUrl}/events/user/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
                     }
                 });
                 console.log(res.data.data);

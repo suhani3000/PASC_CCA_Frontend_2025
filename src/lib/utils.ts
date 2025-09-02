@@ -32,3 +32,5 @@ export const getStatusBadgeVariant = (status: Event['status']) => {
         return 'default';
     }
   };
+
+export const apiUrl = process.env.API_URL || 'http://localhost:4000/api';

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import { apiUrl } from '@/lib/utils';
 import axios from 'axios';
 
 interface Session {
@@ -30,7 +31,6 @@ interface Session {
 }
 
 const AttendanceManagement: React.FC = () => {
-  
   const params = useParams();
   const router = useRouter();
   const eventId = params.eventId;
@@ -53,7 +53,7 @@ const AttendanceManagement: React.FC = () => {
     const fetchSessions = async () => {
       if (!eventId) return;
       try {
-        const res = await axios.get(`http://localhost:4000/api/attendance/events/${eventId}/sessions`, {
+        const res = await axios.get(`${apiUrl}/attendance/events/${eventId}/sessions`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
@@ -105,7 +105,7 @@ const AttendanceManagement: React.FC = () => {
     try{
       const token = localStorage.getItem('token')
       const res = await axios.put(
-        `http://localhost:4000/api/attendance/events/sessions/${session.id}`,
+        `${apiUrl}/attendance/events/sessions/${session.id}`,
         session,
         {
           headers: {
@@ -150,7 +150,7 @@ const AttendanceManagement: React.FC = () => {
         isActive: newSession.isActive,
         credits: newSession.credits,
       };
-      const response = await axios.post(`http://localhost:4000/api/attendance/events/${eventId}/sessions`, payload, {
+      const response = await axios.post(`${apiUrl}/attendance/events/${eventId}/sessions`, payload, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -193,7 +193,7 @@ const AttendanceManagement: React.FC = () => {
         credits: session.credits,
       };
       const res = await axios.put(
-        `http://localhost:4000/api/attendance/events/sessions/${session.id}`,
+        `${apiUrl}/attendance/events/sessions/${session.id}`,
         payload,
         {
           headers: {
@@ -225,7 +225,7 @@ const AttendanceManagement: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:4000/api/attendance/events/sessions/${sessionId}`,
+        `${apiUrl}/attendance/events/sessions/${sessionId}`,
         { isActive: newIsActive },
         {
           headers: {
@@ -295,7 +295,7 @@ const AttendanceManagement: React.FC = () => {
       const token = localStorage.getItem('token');
       const payload = { isActive: session.isActive };
       const res = await axios.put(
-        `http://localhost:4000/api/attendance/events/sessions/${session.id}`,
+        `${apiUrl}/attendance/events/sessions/${session.id}`,
         payload,
         {
           headers: {

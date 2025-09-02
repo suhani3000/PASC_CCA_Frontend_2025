@@ -10,7 +10,7 @@ import { useAuthStore } from "@/lib/store";
 import { Department, IUser } from "@/types/auth";
 import { IAdmin } from "@/types/auth";
 import axios from "axios";
-
+import { apiUrl } from "@/lib/utils";
 export default function Signup() {
 
   const [role, setRole] = useState("student");
@@ -58,8 +58,8 @@ export default function Signup() {
 
     const endpoint =
       role === "admin"
-        ? "http://localhost:4000/api/auth/admin/register"
-        : "http://localhost:4000/api/auth/user/register";
+        ? `${apiUrl}/auth/admin/register`
+        : `${apiUrl}/auth/user/register`;
 
     try {
       let payload;

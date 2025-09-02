@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Event } from "@/types/events";
 import { EventCard } from "@/components/admin/event-card";
-
+import { apiUrl } from "@/lib/utils";
 interface EventsListProps {
   events: Event[];
   filterStatus: "All Events" | "Upcoming" | "Completed" | "Ongoing";
@@ -22,7 +22,7 @@ function useFetchEvents(filterStatus: "All Events" | "Upcoming" | "Completed" | 
         let res;
         if (filterStatus === "All Events") {
           const token = localStorage.getItem('token');
-          res = await axios.get("http://localhost:4000/api/events/admin", {
+          res = await axios.get(`${apiUrl}/events/admin`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setFetchedEvents(res.data.data || []);
@@ -33,7 +33,7 @@ function useFetchEvents(filterStatus: "All Events" | "Upcoming" | "Completed" | 
             "Completed": "COMPLETED",
           };
           const backendStatus = statusMap[filterStatus];
-          res = await axios.get(`http://localhost:4000/api/events/filter?status=${backendStatus}`);
+          res = await axios.get(`${apiUrl}/events/filter?status=${backendStatus}`);
           setFetchedEvents(res.data.data || []);
         }
       } catch (err) {

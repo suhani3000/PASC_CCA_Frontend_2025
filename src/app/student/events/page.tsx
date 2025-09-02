@@ -5,14 +5,14 @@ import { useFetchEventsForStudentRsvp } from "@/hooks/events";
 import { EventWithRsvp } from "@/types/events";
 import { useAuthStore } from "@/lib/store";
 import axios from "axios";
-
+import { apiUrl } from "@/lib/utils";
 export default function EventsPage() {
   const { clearAuth } = useAuthStore();
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:4000/api/auth/user/logout",
+        `${apiUrl}/auth/user/logout`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

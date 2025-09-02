@@ -11,7 +11,7 @@ import {
   AlertCircle,
   Loader2
 } from 'lucide-react';
-
+import { apiUrl } from "@/lib/utils";
 interface FormData {
   title: string;
   description: string;
@@ -50,7 +50,7 @@ const EditEventPage: React.FC = () => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:4000/api/events/${eventId}`, {
+        const response = await axios.get(`${apiUrl}/events/${eventId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -124,7 +124,7 @@ const EditEventPage: React.FC = () => {
       const token = localStorage.getItem('token');
 
       const response = await axios.put(
-        `http://localhost:4000/api/events/${eventId}`,
+        `${apiUrl}/events/${eventId}`,
         payload,
         {
           headers: {

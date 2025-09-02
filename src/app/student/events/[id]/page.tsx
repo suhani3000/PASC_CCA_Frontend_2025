@@ -12,7 +12,7 @@ import { EventAttendanceSessionForUser } from "@/types/attendance";
 import type { Event } from "@/types/events";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-
+import { apiUrl } from "@/lib/utils";
 
 function formatDateToDDMMYY(dateString: string): string {
   if (!dateString) return "";
@@ -48,7 +48,7 @@ export default function EventDetailPage({
         const token = localStorage.getItem("token");
         console.log("getting the event.")
         const res = await axios.get(
-          `http://localhost:4000/api/attendance/user/events/${id}/sessions`,
+          `${apiUrl}/attendance/user/events/${id}/sessions`,
           {
             headers: {
               'Content-type' : 'Application/json',
@@ -77,7 +77,7 @@ export default function EventDetailPage({
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:4000/api/attendance/events/${eventDetails?.id}/sessions/${attendanceModal.sessionId}/attend`,
+        `${apiUrl}/attendance/events/${eventDetails?.id}/sessions/${attendanceModal.sessionId}/attend`,
         {
           code: attendanceCode,
         },

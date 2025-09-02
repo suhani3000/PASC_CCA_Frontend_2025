@@ -11,7 +11,7 @@ import { useAuthStore } from "@/lib/store";
 import { Department } from "@/types/auth";
 import axios from "axios";
 import { UserAttendanceStats } from "@/types/attendance";
-
+import { apiUrl } from "@/lib/utils";
 // Dummy data for zustand user
 const dummyUser = {
   id: 1,
@@ -32,7 +32,7 @@ function useDashboardData(dummyDashboardData: UserAttendanceStats) {
     async function getData() {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:4000/api/attendance/user-attendance-stats", {
+        const response = await axios.get(`${apiUrl}/attendance/user-attendance-stats`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

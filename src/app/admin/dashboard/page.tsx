@@ -12,7 +12,7 @@ import {  useFetchEventsForAdmin } from "@/hooks/events";
 import { Event, EventStatus } from "@/types/events";
 import axios from "axios";
 import { useAuthStore } from "@/lib/store";
-
+import { apiUrl } from "@/lib/utils";
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("ALL EVENTS");
   const [studentCount, setStudentCount] = useState<number | null>(null);
@@ -31,7 +31,7 @@ const AdminDashboard = () => {
       setStudentError(null);
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:4000/api/auth/user/count", {
+        const res = await axios.get(`${apiUrl}/auth/user/count`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStudentCount(res.data.count);
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:4000/api/auth/admin/logout",
+        `${apiUrl}/auth/admin/logout`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
