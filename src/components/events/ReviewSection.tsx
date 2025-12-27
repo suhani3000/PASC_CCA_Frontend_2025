@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Star, ThumbsUp } from 'lucide-react';
+import { Star, ThumbsUp, Edit2, Trash2, X } from 'lucide-react';
 import { reviewAPI } from '@/lib/api';
 import { EventReview, ReviewStats, ReviewCreateInput } from '@/types/review';
 import { Button } from '../ui/button';
@@ -19,6 +19,8 @@ export function ReviewSection({ eventId, eventStatus }: ReviewSectionProps) {
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editingReview, setEditingReview] = useState<EventReview | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<ReviewCreateInput>({
     eventId,
@@ -29,6 +31,14 @@ export function ReviewSection({ eventId, eventStatus }: ReviewSectionProps) {
     organizationRating: 5,
     anonymous: false,
   });
+
+  // Get current user ID from localStorage
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      setCurrentUserId(parseInt(userId));
+    }
+  }, []);
 
   useEffect(() => {
     fetchReviews();
@@ -62,21 +72,32 @@ export function ReviewSection({ eventId, eventStatus }: ReviewSectionProps) {
   const handleSubmitReview = async () => {
     setSubmitting(true);
     try {
-      const response = await reviewAPI.create(formData);
-      if (response.data?.success) {
-        setShowReviewForm(false);
-        fetchReviews();
-        fetchStats();
-        // Reset form
-        setFormData({
-          eventId,
-          rating: 5,
-          review: '',
-          contentRating: 5,
-          speakerRating: 5,
-          organizationRating: 5,
-          anonymous: false,
+      if (editingReview) {
+        // Update existing review
+        const response = await reviewAPI.update(editingReview.id, {
+          rating: formData.rating,
+          review: formData.review,
+          contentRating: formData.contentRating,
+          speakerRating: formData.speakerRating,
+          organizationRating: formData.organizationRating,
+          anonymous: formData.anonymous,
         });
+        if (response.data?.success) {
+          setShowReviewForm(false);
+          setEditingReview(null);
+          fetchReviews();
+          fetchStats();
+          resetForm();
+        }
+      } else {
+        // Create new review
+        const response = await reviewAPI.create(formData);
+        if (response.data?.success) {
+          setShowReviewForm(false);
+          fetchReviews();
+          fetchStats();
+          resetForm();
+        }
       }
     } catch (error) {
       console.error('Error submitting review:', error);
@@ -84,6 +105,56 @@ export function ReviewSection({ eventId, eventStatus }: ReviewSectionProps) {
       setSubmitting(false);
     }
   };
+
+  const handleEditReview = (review: EventReview) => {
+    setEditingReview(review);
+    setFormData({
+      eventId,
+      rating: review.rating,
+      review: review.review || '',
+      contentRating: review.contentRating || 5,
+      speakerRating: review.speakerRating || 5,
+      organizationRating: review.organizationRating || 5,
+      anonymous: review.anonymous || false,
+    });
+    setShowReviewForm(true);
+  };
+
+  const handleDeleteReview = async (reviewId: number) => {
+    if (!confirm('Are you sure you want to delete your review?')) return;
+    
+    try {
+      const response = await reviewAPI.delete(reviewId);
+      if (response.data?.success) {
+        fetchReviews();
+        fetchStats();
+      }
+    } catch (error) {
+      console.error('Error deleting review:', error);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      eventId,
+      rating: 5,
+      review: '',
+      contentRating: 5,
+      speakerRating: 5,
+      organizationRating: 5,
+      anonymous: false,
+    });
+    setEditingReview(null);
+  };
+
+  const handleCancelEdit = () => {
+    setShowReviewForm(false);
+    setEditingReview(null);
+    resetForm();
+  };
+
+  // Check if current user has already reviewed
+  const userHasReviewed = reviews.some(r => r.userId === currentUserId);
 
   const renderStars = (rating: number, interactive: boolean = false, onChange?: (rating: number) => void) => {
     return (
@@ -118,9 +189,15 @@ export function ReviewSection({ eventId, eventStatus }: ReviewSectionProps) {
                 Based on {stats.totalReviews} review{stats.totalReviews !== 1 ? 's' : ''}
               </p>
             </div>
-            {eventStatus === 'COMPLETED' && (
-              <Button onClick={() => setShowReviewForm(!showReviewForm)}>
-                {showReviewForm ? 'Cancel' : 'Write Review'}
+            {eventStatus === 'COMPLETED' && !userHasReviewed && !showReviewForm && (
+              <Button onClick={() => setShowReviewForm(true)}>
+                Write Review
+              </Button>
+            )}
+            {showReviewForm && (
+              <Button variant="outline" onClick={handleCancelEdit}>
+                <X className="w-4 h-4 mr-2" />
+                Cancel
               </Button>
             )}
           </div>
@@ -152,7 +229,9 @@ export function ReviewSection({ eventId, eventStatus }: ReviewSectionProps) {
       {/* Review Form */}
       {showReviewForm && (
         <div className="bg-card rounded-xl border border-border p-6">
-          <h3 className="text-lg font-semibold mb-4">Write Your Review</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            {editingReview ? 'Edit Your Review' : 'Write Your Review'}
+          </h3>
           
           <div className="space-y-4">
             {/* Overall Rating */}
@@ -217,7 +296,7 @@ export function ReviewSection({ eventId, eventStatus }: ReviewSectionProps) {
               disabled={submitting}
               className="w-full"
             >
-              {submitting ? 'Submitting...' : 'Submit Review'}
+              {submitting ? 'Submitting...' : editingReview ? 'Update Review' : 'Submit Review'}
             </Button>
           </div>
         </div>
@@ -242,55 +321,85 @@ export function ReviewSection({ eventId, eventStatus }: ReviewSectionProps) {
             No reviews yet. Be the first to review!
           </div>
         ) : (
-          reviews.map(review => (
-            <div key={review.id} className="bg-card rounded-lg border border-border p-4">
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <p className="font-medium">
-                    {review.anonymous ? 'Anonymous' : review.user?.name || 'User'}
-                  </p>
-                  {!review.anonymous && review.user?.department && (
-                    <p className="text-sm text-muted-foreground">
-                      {review.user.department}
+          reviews.map(review => {
+            const isOwnReview = review.userId === currentUserId;
+            return (
+              <div key={review.id} className={`bg-card rounded-lg border p-4 ${isOwnReview ? 'border-blue-300 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-950/20' : 'border-border'}`}>
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <p className="font-medium flex items-center gap-2">
+                      {review.anonymous ? 'Anonymous' : review.user?.name || 'User'}
+                      {isOwnReview && (
+                        <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                          Your review
+                        </span>
+                      )}
                     </p>
-                  )}
+                    {!review.anonymous && review.user?.department && (
+                      <p className="text-sm text-muted-foreground">
+                        {review.user.department}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="text-right">
+                      {renderStars(review.rating)}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {formatDistanceToNow(new Date(review.createdAt))}
+                      </p>
+                    </div>
+                    {/* Edit/Delete buttons for own reviews */}
+                    {isOwnReview && (
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleEditReview(review)}
+                          className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                          title="Edit review"
+                        >
+                          <Edit2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteReview(review.id)}
+                          className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                          title="Delete review"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="text-right">
-                  {renderStars(review.rating)}
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {formatDistanceToNow(new Date(review.createdAt))}
-                  </p>
-                </div>
+                
+                {review.review && (
+                  <p className="text-foreground mt-2">{review.review}</p>
+                )}
+                
+                {(review.contentRating || review.speakerRating || review.organizationRating) && (
+                  <div className="flex gap-4 mt-3 text-sm">
+                    {review.contentRating && (
+                      <span className="text-muted-foreground">
+                        Content: {review.contentRating}/5
+                      </span>
+                    )}
+                    {review.speakerRating && (
+                      <span className="text-muted-foreground">
+                        Speaker: {review.speakerRating}/5
+                      </span>
+                    )}
+                    {review.organizationRating && (
+                      <span className="text-muted-foreground">
+                        Organization: {review.organizationRating}/5
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
-              
-              {review.review && (
-                <p className="text-foreground mt-2">{review.review}</p>
-              )}
-              
-              {(review.contentRating || review.speakerRating || review.organizationRating) && (
-                <div className="flex gap-4 mt-3 text-sm">
-                  {review.contentRating && (
-                    <span className="text-muted-foreground">
-                      Content: {review.contentRating}/5
-                    </span>
-                  )}
-                  {review.speakerRating && (
-                    <span className="text-muted-foreground">
-                      Speaker: {review.speakerRating}/5
-                    </span>
-                  )}
-                  {review.organizationRating && (
-                    <span className="text-muted-foreground">
-                      Organization: {review.organizationRating}/5
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
   );
 }
+
 

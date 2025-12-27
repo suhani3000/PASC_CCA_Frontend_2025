@@ -118,14 +118,7 @@ export default function Login() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              <div className="flex justify-end">
-                <Link
-                  href="/auth/reset-password"
-                  className="link-text text-xs sm:text-sm"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
+              {/* Password reset not yet implemented in backend */}
               {error && (
                 <div className="text-red-500 text-xs sm:text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
                   {error}

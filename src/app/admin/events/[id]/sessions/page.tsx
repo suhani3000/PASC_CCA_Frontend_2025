@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Edit, Trash2, Clock, MapPin, Award, Calendar } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Clock, MapPin, Award, Calendar } from 'lucide-react';
 import { attendanceAPI, eventAPI } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -69,8 +69,7 @@ export default function SessionManagementPage({
 
   const fetchSessions = async (id: number) => {
     try {
-      // Note: You'll need to add this endpoint to your API
-      const response = await attendanceAPI.getSessionAttendance(id);
+      const response = await attendanceAPI.getEventSessions(id);
       if (response.data?.success && response.data.data) {
         setSessions(response.data.data as any);
       }
@@ -84,16 +83,19 @@ export default function SessionManagementPage({
   const handleSubmit = async () => {
     try {
       const payload = {
-        ...formData,
-        eventId,
+        sessionName: formData.sessionName,
+        location: formData.location,
+        code: formData.code,
+        credits: formData.credits,
         startTime: new Date(formData.startTime).toISOString(),
         endTime: formData.endTime ? new Date(formData.endTime).toISOString() : null,
+        isActive: formData.isActive,
       };
 
       if (editingSession) {
         await attendanceAPI.updateSession(editingSession.id, payload);
       } else {
-        await attendanceAPI.createSession(payload);
+        await attendanceAPI.createSession(eventId, payload);
       }
       setShowDialog(false);
       resetForm();
@@ -104,15 +106,17 @@ export default function SessionManagementPage({
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this session?')) return;
+  // Note: Backend doesn't have a delete session endpoint
+  // Sessions can be deactivated by setting isActive to false
+  const handleDeactivate = async (session: AttendanceSession) => {
+    if (!confirm(`Are you sure you want to ${session.isActive ? 'deactivate' : 'activate'} this session?`)) return;
     
     try {
-      await attendanceAPI.deleteSession(id);
+      await attendanceAPI.updateSession(session.id, { isActive: !session.isActive });
       fetchSessions(eventId);
     } catch (error) {
-      console.error('Error deleting session:', error);
-      alert('Failed to delete session.');
+      console.error('Error updating session:', error);
+      alert('Failed to update session.');
     }
   };
 
@@ -210,14 +214,20 @@ export default function SessionManagementPage({
                       <button
                         onClick={() => handleEdit(session)}
                         className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                        title="Edit session"
                       >
                         <Edit className="w-4 h-4 text-blue-600" />
                       </button>
                       <button
-                        onClick={() => handleDelete(session.id)}
-                        className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        onClick={() => handleDeactivate(session)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          session.isActive 
+                            ? 'hover:bg-red-100 dark:hover:bg-red-900/20' 
+                            : 'hover:bg-green-100 dark:hover:bg-green-900/20'
+                        }`}
+                        title={session.isActive ? 'Deactivate session' : 'Activate session'}
                       >
-                        <Trash2 className="w-4 h-4 text-red-600" />
+                        <Clock className={`w-4 h-4 ${session.isActive ? 'text-red-600' : 'text-green-600'}`} />
                       </button>
                     </div>
                   </div>
@@ -354,4 +364,5 @@ export default function SessionManagementPage({
     </main>
   );
 }
+
 

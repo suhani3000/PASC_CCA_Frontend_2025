@@ -25,7 +25,7 @@ export default function AdminAnalyticsPage() {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await analyticsAPI.getDashboard();
+      const response = await analyticsAPI.getAdminDashboard();
       if (response.data?.success && response.data.data) {
         setAnalytics(response.data.data as DashboardAnalytics);
       }
@@ -267,4 +267,5 @@ function MetricCard({ icon, title, value, subtitle, loading, color }: MetricCard
     </div>
   );
 }
+
 

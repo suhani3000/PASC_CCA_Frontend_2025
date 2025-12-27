@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Megaphone } from 'lucide-react';
+import { Plus, Edit, Trash2, Megaphone, AlertCircle } from 'lucide-react';
 import { announcementAPI } from '@/lib/api';
 import { Announcement, AnnouncementPriority, AnnouncementCreateInput } from '@/types/announcement';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,9 @@ export default function AdminAnnouncementsPage() {
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<AnnouncementCreateInput>({
     title: '',
     message: '',
@@ -27,34 +30,56 @@ export default function AdminAnnouncementsPage() {
   });
 
   useEffect(() => {
+    // Check if admin is logged in
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Please log in as an admin to manage announcements');
+      setLoading(false);
+      return;
+    }
     fetchAnnouncements();
   }, []);
 
   const fetchAnnouncements = async () => {
+    setError(null);
     try {
-      const response = await announcementAPI.getAll({ limit: 50 });
+      const response = await announcementAPI.getAllAdmin({ limit: 50 });
       if (response.data?.success && response.data.data) {
         setAnnouncements(response.data.data as Announcement[]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching announcements:', error);
+      const errorMsg = error.response?.data?.error || error.message || 'Failed to fetch announcements';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
   const handleSubmit = async () => {
+    setSubmitError(null);
+    setSubmitting(true);
     try {
       if (editingAnnouncement) {
-        await announcementAPI.update(editingAnnouncement.id, formData);
+        const response = await announcementAPI.update(editingAnnouncement.id, formData);
+        if (!response.data?.success) {
+          throw new Error(response.data?.error || 'Failed to update announcement');
+        }
       } else {
-        await announcementAPI.create(formData);
+        const response = await announcementAPI.create(formData);
+        if (!response.data?.success) {
+          throw new Error(response.data?.error || 'Failed to create announcement');
+        }
       }
       setShowDialog(false);
       resetForm();
       fetchAnnouncements();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving announcement:', error);
+      const errorMsg = error.response?.data?.error || error.message || 'Failed to save announcement';
+      setSubmitError(errorMsg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -64,8 +89,9 @@ export default function AdminAnnouncementsPage() {
     try {
       await announcementAPI.delete(id);
       fetchAnnouncements();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting announcement:', error);
+      alert(error.response?.data?.error || 'Failed to delete announcement');
     }
   };
 
@@ -83,6 +109,7 @@ export default function AdminAnnouncementsPage() {
 
   const resetForm = () => {
     setEditingAnnouncement(null);
+    setSubmitError(null);
     setFormData({
       title: '',
       message: '',
@@ -156,6 +183,15 @@ export default function AdminAnnouncementsPage() {
               {[1, 2, 3].map(i => (
                 <Skeleton key={i} className="h-32 w-full" />
               ))}
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500 opacity-70" />
+              <p className="text-lg mb-2 text-red-600 dark:text-red-400">{error}</p>
+              <p className="text-sm text-muted-foreground mb-4">Make sure you are logged in as an admin</p>
+              <Button onClick={() => window.location.href = '/auth/login'}>
+                Go to Login
+              </Button>
             </div>
           ) : announcements.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
@@ -312,6 +348,14 @@ export default function AdminAnnouncementsPage() {
                 onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
               />
             </div>
+
+            {/* Error Message */}
+            {submitError && (
+              <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span className="text-sm">{submitError}</span>
+              </div>
+            )}
           </div>
 
           <DialogFooter>
@@ -320,12 +364,14 @@ export default function AdminAnnouncementsPage() {
               onClick={() => {
                 setShowDialog(false);
                 resetForm();
+                setSubmitError(null);
               }}
+              disabled={submitting}
             >
               Cancel
             </Button>
-            <Button onClick={handleSubmit}>
-              {editingAnnouncement ? 'Update' : 'Create'} Announcement
+            <Button onClick={handleSubmit} disabled={submitting || !formData.title || !formData.message}>
+              {submitting ? 'Saving...' : editingAnnouncement ? 'Update' : 'Create'} Announcement
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -333,4 +379,5 @@ export default function AdminAnnouncementsPage() {
     </main>
   );
 }
+
 

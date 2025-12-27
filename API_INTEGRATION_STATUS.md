@@ -1,113 +1,222 @@
-# API Integration Status
+# API Integration Status - Complete Audit
 
-## Backend API Endpoints
+> Last Updated: December 27, 2025
 
-### 🔐 Authentication (`/api/auth`)
-- ✅ `POST /user/register` - User registration
-- ✅ `POST /user/login` - User login
-- ✅ `POST /user/logout` - User logout
-- ✅ `GET /user/me` - Get current user
-- ✅ `POST /admin/register` - Admin registration
-- ✅ `POST /admin/login` - Admin login
-- ✅ `POST /admin/logout` - Admin logout
-- ✅ `GET /admin/me` - Get current admin
-- ⚠️ `GET /user/count` - Get user count (NOT INTEGRATED)
+## Base URL
+- Backend: `http://localhost:4000/api` (dev) or production URL
+- All endpoints are prefixed with `/api`
 
-### 📅 Events (`/api/events`)
-- ✅ `POST /` - Create event (Admin)
-- ✅ `PUT /:id` - Update event (Admin)
-- ✅ `DELETE /:id` - Delete event (Admin)
-- ✅ `GET /admin` - Get all events for admin
-- ✅ `GET /user` - Get events for user
-- ✅ `GET /` - Get all events (public)
-- ✅ `GET /filter` - Filter events by status
-- ✅ `GET /:id` - Get event by ID
+---
 
-### 🎟️ RSVP (`/api/rsvps`)
-- ✅ `POST /` - Create RSVP
-- ⚠️ `PUT /:id` - Update RSVP (NOT INTEGRATED)
-- ✅ `DELETE /:id` - Delete RSVP
-- ⚠️ `GET /user` - Get user's RSVPs (NOT INTEGRATED)
-- ⚠️ `GET /events/:eventId/rsvp` - Get RSVP for event (NOT INTEGRATED)
-- ⚠️ `GET /event/:eventId` - Get all RSVPs for event (Admin) (NOT INTEGRATED)
+## 🔐 Authentication (`/api/auth`)
 
-### 📊 Attendance (`/api/attendance`)
-- ✅ `POST /events/:eventId/sessions` - Create session (Admin)
-- ✅ `PUT /events/sessions/:sessionId` - Update session (Admin)
-- ✅ `GET /sessions/:sessionId/stats` - Get session stats (Admin)
-- ✅ `GET /events/:eventId/sessions` - Get all sessions for event (Admin)
-- ✅ `POST /events/:eventId/sessions/:sessionId/attend` - Mark attendance
-- ⚠️ `GET /events/:eventId/sessions/attendance` - Get user attendance for event (NOT INTEGRATED)
-- ✅ `GET /user-attendance-stats` - Get user attendance stats
-- ⚠️ `GET /user/events/:eventId/sessions` - Get sessions for user by event (NOT INTEGRATED)
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/user/register` | POST | None | ✅ Integrated | Signup page |
+| `/user/login` | POST | None | ✅ Integrated | Login page |
+| `/user/logout` | POST | User | ✅ Integrated | Navbar |
+| `/user/me` | GET | User | ✅ Integrated | Auth store |
+| `/admin/register` | POST | None | ✅ Integrated | Admin signup |
+| `/admin/login` | POST | None | ✅ Integrated | Admin login |
+| `/admin/logout` | POST | Admin | ✅ Integrated | Navbar |
+| `/admin/me` | GET | Admin | ✅ Integrated | Auth store |
+| `/user/count` | GET | Admin | ✅ Integrated | Admin dashboard |
 
-### 🏆 Leaderboard (`/api/leaderboard`)
-- ✅ `GET /` - Get leaderboard
-- ⚠️ `GET /my-rank` - Get user's rank (NOT INTEGRATED)
+---
 
-### 📈 Analytics (`/api/analytics`)
-- ⚠️ `GET /admin` - Get admin analytics (PARTIAL)
-- ⚠️ `GET /user` - Get user analytics (PARTIAL)
-- ⚠️ `GET /event/:eventId` - Get event analytics (NOT INTEGRATED)
+## 📅 Events (`/api/events`)
 
-### 📢 Announcements (`/api/announcements`)
-- ⚠️ `POST /` - Create announcement (Admin) (NOT INTEGRATED)
-- ⚠️ `PUT /:announcementId` - Update announcement (Admin) (NOT INTEGRATED)
-- ⚠️ `DELETE /:announcementId` - Delete announcement (Admin) (NOT INTEGRATED)
-- ⚠️ `GET /user` - Get user announcements (PARTIAL)
-- ⚠️ `GET /` - Get all announcements (Admin) (NOT INTEGRATED)
-- ⚠️ `POST /:announcementId/read` - Mark as read (NOT INTEGRATED)
-- ⚠️ `GET /unread-count` - Get unread count (NOT INTEGRATED)
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | GET | None | ✅ Integrated | Public events list |
+| `/:id` | GET | None | ✅ Integrated | Event details |
+| `/filter` | GET | None | ✅ Integrated | Filter by status |
+| `/admin` | GET | Admin | ✅ Integrated | Admin dashboard |
+| `/user` | GET | User | ✅ Integrated | Student events with RSVP |
+| `/` | POST | Admin | ✅ Integrated | Create event |
+| `/:id` | PUT | Admin | ✅ Integrated | Update event |
+| `/:id` | DELETE | Admin | ✅ Integrated | Delete event |
 
-### 🔔 Notifications (`/api/notifications`)
-- ⚠️ `GET /user` - Get user notifications (PARTIAL)
-- ⚠️ `POST /:notificationId/read` - Mark as read (NOT INTEGRATED)
-- ⚠️ `GET /unread-count` - Get unread count (NOT INTEGRATED)
+---
 
-### ⭐ Reviews (`/api/reviews`)
-- ⚠️ `POST /` - Create review (NOT INTEGRATED)
-- ⚠️ `GET /event/:eventId` - Get reviews for event (NOT INTEGRATED)
-- ⚠️ `PUT /:reviewId` - Update review (NOT INTEGRATED)
-- ⚠️ `DELETE /:reviewId` - Delete review (NOT INTEGRATED)
+## 🎟️ RSVP (`/api/rsvps`) ⚠️ Note the 's'!
 
-### 📁 Resources (`/api/resources`)
-- ⚠️ `POST /` - Create resource (Admin) (NOT INTEGRATED)
-- ⚠️ `GET /event/:eventId` - Get resources for event (NOT INTEGRATED)
-- ⚠️ `PUT /:resourceId` - Update resource (Admin) (NOT INTEGRATED)
-- ⚠️ `DELETE /:resourceId` - Delete resource (Admin) (NOT INTEGRATED)
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | POST | User | ✅ Integrated | Create RSVP |
+| `/:id` | PUT | User | ✅ Integrated | Update RSVP status |
+| `/:id` | DELETE | User | ✅ Integrated | Cancel RSVP (uses rsvpId) |
+| `/user` | GET | User | ✅ Integrated | Get user's RSVPs |
+| `/events/:eventId/rsvp` | GET | User | ✅ Integrated | Get user's RSVP for event |
+| `/event/:eventId` | GET | Admin | ✅ Integrated | Get all RSVPs for event |
 
-### 🖼️ Gallery (`/api/gallery`)
-- ⚠️ `POST /` - Upload image (Admin) (NOT INTEGRATED)
-- ⚠️ `GET /event/:eventId` - Get gallery for event (NOT INTEGRATED)
-- ⚠️ `DELETE /:imageId` - Delete image (Admin) (NOT INTEGRATED)
+---
 
-### 📅 Calendar (`/api/calendar`)
-- ⚠️ `GET /user/events` - Get user calendar events (NOT INTEGRATED)
-- ⚠️ `POST /export` - Export to calendar (NOT INTEGRATED)
+## 📊 Attendance (`/api/attendance`)
 
-## Priority Integration List
+### Admin Endpoints
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/events/:eventId/sessions` | POST | Admin | ✅ Integrated | Create session |
+| `/events/sessions/:sessionId` | PUT | Admin | ✅ Integrated | Update session |
+| `/sessions/:sessionId/stats` | GET | Admin | ✅ Integrated | Session statistics |
+| `/events/:eventId/sessions` | GET | Admin | ✅ Integrated | Get all sessions for event |
 
-### HIGH PRIORITY (Core Features)
-1. ✅ Student Dashboard - Analytics API
-2. ⚠️ Student Events - Filter/Search functionality
-3. ⚠️ Event Details - Reviews, Resources, Gallery
-4. ⚠️ Admin Analytics Dashboard
-5. ⚠️ Announcements Management (Admin)
-6. ⚠️ My RSVPs page for students
+### User Endpoints
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/events/:eventId/sessions/:sessionId/attend` | POST | User | ✅ Integrated | Mark attendance |
+| `/events/:eventId/sessions/attendance` | GET | User | ✅ Integrated | User attendance for event |
+| `/user-attendance-stats` | GET | User | ✅ Integrated | Overall user stats |
+| `/user/events/:eventId/sessions` | GET | User | ✅ Integrated | Sessions for user by event |
 
-### MEDIUM PRIORITY (Enhanced Features)
-7. ⚠️ User Rank in Leaderboard
-8. ⚠️ Notification Mark as Read
-9. ⚠️ Event Analytics for Admin
-10. ⚠️ Calendar Export
+---
 
-### LOW PRIORITY (Nice to Have)
-11. ⚠️ Review CRUD operations
-12. ⚠️ Resource Management UI
-13. ⚠️ Gallery Management UI
+## 📢 Announcements (`/api/announcements`)
 
-## Status Legend
-- ✅ Fully Integrated
-- ⚠️ Partially Integrated or Not Integrated
-- ❌ Blocked/Issues
+### Admin Endpoints
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | POST | Admin | ✅ Integrated | Create announcement |
+| `/:announcementId` | PUT | Admin | ✅ Integrated | Update announcement |
+| `/:announcementId` | DELETE | Admin | ✅ Integrated | Delete announcement |
+| `/all` | GET | Admin | ✅ Integrated | Get all announcements |
 
+### User Endpoints
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | GET | User | ✅ Integrated | Get user announcements |
+| `/:announcementId/read` | POST | User | ✅ Integrated | Mark as read |
+| `/unread-count` | GET | User | ✅ Integrated | Unread count |
+
+---
+
+## 🔔 Notifications (`/api/notifications`)
+
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | GET | User | ✅ Integrated | Get notifications |
+| `/:notificationId/read` | POST | User | ✅ Integrated | Mark as read |
+| `/mark-all-read` | POST | User | ✅ Integrated | Mark all as read |
+| `/unread-count` | GET | User | ✅ Integrated | Get unread count |
+
+---
+
+## ⭐ Reviews (`/api/reviews`)
+
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | POST | User | ✅ Integrated | Create review |
+| `/:reviewId` | PUT | User | ✅ Integrated | Update review |
+| `/:reviewId` | DELETE | User | ✅ Integrated | Delete review |
+| `/event/:eventId` | GET | None | ✅ Integrated | Get event reviews |
+| `/event/:eventId/stats` | GET | None | ✅ Integrated | Get review stats |
+
+---
+
+## 📁 Resources (`/api/resources`)
+
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | POST | Admin | ✅ Integrated | Create resource |
+| `/:resourceId` | PUT | Admin | ✅ Integrated | Update resource |
+| `/:resourceId` | DELETE | Admin | ✅ Integrated | Delete resource |
+| `/event/:eventId` | GET | None | ✅ Integrated | Get event resources |
+
+---
+
+## 🖼️ Gallery (`/api/gallery`)
+
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | POST | Admin | ✅ Integrated | Upload image |
+| `/:imageId` | PUT | Admin | ✅ Integrated | Update image |
+| `/:imageId` | DELETE | Admin | ✅ Integrated | Delete image |
+| `/` | GET | None | ✅ Integrated | Get all gallery |
+| `/event/:eventId` | GET | None | ✅ Integrated | Get event gallery |
+
+---
+
+## 🏆 Leaderboard (`/api/leaderboard`)
+
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/` | GET | None | ✅ Integrated | Get leaderboard |
+| `/my-rank` | GET | User | ✅ Integrated | Get user's rank |
+
+---
+
+## 📈 Analytics (`/api/analytics`)
+
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/admin` | GET | Admin | ✅ Integrated | Admin dashboard analytics |
+| `/event/:eventId` | GET | Admin | ✅ Integrated | Event analytics |
+| `/user` | GET | User | ✅ Integrated | User analytics |
+
+---
+
+## 📅 Calendar (`/api/calendar`)
+
+| Endpoint | Method | Auth | Frontend Status | Notes |
+|----------|--------|------|-----------------|-------|
+| `/public/download` | GET | None | ✅ Integrated | Download public calendar |
+| `/event/:eventId/download` | GET | None | ✅ Integrated | Download event calendar |
+| `/event/:eventId/links` | GET | None | ✅ Integrated | Get calendar links |
+| `/my-calendar/download` | GET | User | ✅ Integrated | Download user calendar |
+
+---
+
+## Key Changes Made (Dec 27, 2025)
+
+### Critical Fixes
+1. **RSVP Base Path**: Changed from `/rsvp` to `/rsvps` (backend uses plural)
+2. **RSVP Cancel**: Now correctly uses `rsvpId` instead of `eventId`
+3. **Announcements Admin**: Changed from `/announcements` to `/announcements/all`
+4. **Analytics Admin**: Changed from `/analytics/dashboard` to `/analytics/admin`
+5. **Notifications**: Changed from PUT to POST for mark read endpoints
+
+### Removed Non-Existent Endpoints
+- `authAPI.changePassword` - Not in backend
+- `authAPI.resetPassword` - Not in backend
+- `leaderboardAPI.getUserRank` - Not in backend
+
+### Added Missing Endpoints
+- `authAPI.userLogout/adminLogout` - Logout endpoints
+- `authAPI.getCurrentUser/getCurrentAdmin` - Get current user
+- `authAPI.getUserCount` - Admin endpoint
+- `galleryAPI.getAll` - Get all gallery images
+
+---
+
+## Frontend API Service Location
+`/src/lib/api.ts` - All API calls are centralized here with proper axios interceptors for:
+- Automatic token attachment
+- 401 handling (redirect to login)
+- Error handling
+
+---
+
+## Testing Checklist
+
+### Student Flow
+- [ ] Login as student
+- [ ] View events list
+- [ ] RSVP to event
+- [ ] Cancel RSVP
+- [ ] View event details
+- [ ] Mark attendance
+- [ ] View announcements
+- [ ] View leaderboard
+- [ ] View profile
+
+### Admin Flow
+- [ ] Login as admin
+- [ ] View dashboard
+- [ ] Create event
+- [ ] Edit event
+- [ ] Delete event
+- [ ] Create announcement
+- [ ] Manage sessions
+- [ ] View analytics
+- [ ] Manage resources/gallery

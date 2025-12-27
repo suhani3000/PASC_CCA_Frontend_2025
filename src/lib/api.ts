@@ -47,27 +47,57 @@ export default api;
 
 // Auth APIs
 export const authAPI = {
+  // User endpoints
+  userLogin: (email: string, password: string) =>
+    api.post('/auth/user/login', { email, password }),
+  
+  userRegister: (data: any) =>
+    api.post('/auth/user/register', data),
+  
+  userLogout: () =>
+    api.post('/auth/user/logout'),
+  
+  getCurrentUser: () =>
+    api.get('/auth/user/me'),
+  
+  // Admin endpoints
+  adminLogin: (email: string, password: string) =>
+    api.post('/auth/admin/login', { email, password }),
+  
+  adminRegister: (data: any) =>
+    api.post('/auth/admin/register', data),
+  
+  adminLogout: () =>
+    api.post('/auth/admin/logout'),
+  
+  getCurrentAdmin: () =>
+    api.get('/auth/admin/me'),
+  
+  // Admin-only endpoint
+  getUserCount: () =>
+    api.get('/auth/user/count'),
+  
+  // Legacy helper for login page compatibility
   login: (email: string, password: string, role: 'user' | 'admin') =>
     api.post(`/auth/${role}/login`, { email, password }),
   
   register: (data: any) =>
     api.post('/auth/user/register', data),
-  
-  changePassword: (oldPassword: string, newPassword: string) =>
-    api.post('/auth/change-password', { oldPassword, newPassword }),
-  
-  resetPassword: (email: string) =>
-    api.post('/auth/reset-password', { email }),
 };
 
 // Event APIs
 export const eventAPI = {
+  // Public endpoints
   getAll: (params?: { status?: string; page?: number; limit?: number }) =>
     api.get('/events', { params }),
   
   getById: (id: number) =>
     api.get(`/events/${id}`),
   
+  getByStatus: (status: string) =>
+    api.get('/events/filter', { params: { status } }),
+  
+  // Admin endpoints (requireAdmin)
   create: (data: any) =>
     api.post('/events', data),
   
@@ -77,44 +107,64 @@ export const eventAPI = {
   delete: (id: number) =>
     api.delete(`/events/${id}`),
   
+  getAdminEvents: () =>
+    api.get('/events/admin'),
+  
+  // User endpoints (requireUser)
   getUserEvents: () =>
-    api.get('/events/user/events'),
+    api.get('/events/user'),
 };
 
-// RSVP APIs
+// RSVP APIs (Base: /api/rsvps - note the 's'!)
 export const rsvpAPI = {
+  // User endpoints (requireUser)
   create: (eventId: number) =>
-    api.post('/rsvp', { eventId }),
+    api.post('/rsvps', { eventId }),
   
-  cancel: (eventId: number) =>
-    api.delete(`/rsvp/${eventId}`),
+  update: (rsvpId: number, data: any) =>
+    api.put(`/rsvps/${rsvpId}`, data),
   
-  getEventRsvps: (eventId: number) =>
-    api.get(`/rsvp/event/${eventId}`),
+  cancel: (rsvpId: number) =>
+    api.delete(`/rsvps/${rsvpId}`),
   
   getUserRsvps: () =>
-    api.get('/rsvp/user'),
+    api.get('/rsvps/user'),
+  
+  getRsvpByEventId: (eventId: number) =>
+    api.get(`/rsvps/events/${eventId}/rsvp`),
+  
+  // Admin endpoint (requireAdmin)
+  getEventRsvps: (eventId: number) =>
+    api.get(`/rsvps/event/${eventId}`),
 };
 
 // Attendance APIs
 export const attendanceAPI = {
-  markAttendance: (sessionId: number, code: string) =>
-    api.post('/attendance/mark', { sessionId, code }),
+  // User endpoints (requireUser)
+  markAttendance: (eventId: number, sessionId: number, code?: string) =>
+    api.post(`/attendance/events/${eventId}/sessions/${sessionId}/attend`, code ? { code } : {}),
   
   getUserStats: () =>
     api.get('/attendance/user-attendance-stats'),
   
-  getSessionAttendance: (sessionId: number) =>
-    api.get(`/attendance/session/${sessionId}`),
+  getUserEventAttendance: (eventId: number) =>
+    api.get(`/attendance/events/${eventId}/sessions/attendance`),
   
-  createSession: (data: any) =>
-    api.post('/attendance/session', data),
+  getUserSessionsByEvent: (eventId: number) =>
+    api.get(`/attendance/user/events/${eventId}/sessions`),
+  
+  // Admin endpoints (requireAdmin)
+  createSession: (eventId: number, data: any) =>
+    api.post(`/attendance/events/${eventId}/sessions`, data),
   
   updateSession: (sessionId: number, data: any) =>
-    api.put(`/attendance/session/${sessionId}`, data),
+    api.put(`/attendance/events/sessions/${sessionId}`, data),
   
-  deleteSession: (sessionId: number) =>
-    api.delete(`/attendance/session/${sessionId}`),
+  getSessionStats: (sessionId: number) =>
+    api.get(`/attendance/sessions/${sessionId}/stats`),
+  
+  getEventSessions: (eventId: number) =>
+    api.get(`/attendance/events/${eventId}/sessions`),
 };
 
 // Review APIs
@@ -152,44 +202,54 @@ export const resourceAPI = {
 
 // Gallery APIs
 export const galleryAPI = {
+  // Admin endpoints (requireAdmin)
   create: (data: any) =>
     api.post('/gallery', data),
   
+  update: (imageId: number, data: any) =>
+    api.put(`/gallery/${imageId}`, data),
+  
+  delete: (imageId: number) =>
+    api.delete(`/gallery/${imageId}`),
+  
+  // Public endpoints
+  getAll: () =>
+    api.get('/gallery'),
+  
   getEventGallery: (eventId: number) =>
     api.get(`/gallery/event/${eventId}`),
-  
-  update: (galleryId: number, data: any) =>
-    api.put(`/gallery/${galleryId}`, data),
-  
-  delete: (galleryId: number) =>
-    api.delete(`/gallery/${galleryId}`),
 };
 
-// Notification APIs
+// Notification APIs (all require User auth)
 export const notificationAPI = {
   getAll: (params?: { read?: boolean; limit?: number }) =>
     api.get('/notifications', { params }),
   
   markAsRead: (notificationId: number) =>
-    api.put(`/notifications/${notificationId}/read`),
+    api.post(`/notifications/${notificationId}/read`),
   
   markAllAsRead: () =>
-    api.put('/notifications/read-all'),
+    api.post('/notifications/mark-all-read'),
   
   getUnreadCount: () =>
     api.get('/notifications/unread-count'),
-  
-  delete: (notificationId: number) =>
-    api.delete(`/notifications/${notificationId}`),
 };
 
 // Announcement APIs
 export const announcementAPI = {
+  // User endpoints (requireUser)
   getAll: (params?: { priority?: string; limit?: number }) =>
     api.get('/announcements', { params }),
   
-  getById: (id: number) =>
-    api.get(`/announcements/${id}`),
+  markAsRead: (id: number) =>
+    api.post(`/announcements/${id}/read`),
+  
+  getUnreadCount: () =>
+    api.get('/announcements/unread-count'),
+  
+  // Admin endpoints (requireAdmin)
+  getAllAdmin: (params?: { priority?: string; limit?: number }) =>
+    api.get('/announcements/all', { params }),
   
   create: (data: any) =>
     api.post('/announcements', data),
@@ -199,41 +259,48 @@ export const announcementAPI = {
   
   delete: (id: number) =>
     api.delete(`/announcements/${id}`),
-  
-  markAsRead: (id: number) =>
-    api.post(`/announcements/${id}/read`),
 };
 
 // Leaderboard APIs
 export const leaderboardAPI = {
+  // Public endpoint
   get: (params?: { period?: string; year?: number; month?: number; limit?: number }) =>
     api.get('/leaderboard', { params }),
   
+  // User endpoint (requireUser)
   getMyRank: () =>
     api.get('/leaderboard/my-rank'),
-  
-  getUserRank: (userId: number, period: string) =>
-    api.get(`/leaderboard/user/${userId}`, { params: { period } }),
 };
 
 // Analytics APIs
 export const analyticsAPI = {
-  getDashboard: () =>
-    api.get('/analytics/dashboard'),
+  // Admin endpoint (requireAdmin)
+  getAdminDashboard: () =>
+    api.get('/analytics/admin'),
   
+  // Admin endpoint (requireAdmin)
   getEventAnalytics: (eventId: number) =>
     api.get(`/analytics/event/${eventId}`),
   
+  // User endpoint (requireUser)
   getUserAnalytics: () =>
     api.get('/analytics/user'),
 };
 
 // Calendar APIs
 export const calendarAPI = {
+  // Public endpoints
   getEventLinks: (eventId: number) =>
-    api.get(`/calendar/event/${eventId}`),
+    api.get(`/calendar/event/${eventId}/links`),
   
-  getAllEventsCalendar: () =>
-    api.get('/calendar/all'),
+  downloadEventCalendar: (eventId: number) =>
+    api.get(`/calendar/event/${eventId}/download`, { responseType: 'blob' }),
+  
+  downloadPublicCalendar: () =>
+    api.get('/calendar/public/download', { responseType: 'blob' }),
+  
+  // User endpoint (requireUser)
+  downloadMyCalendar: () =>
+    api.get('/calendar/my-calendar/download', { responseType: 'blob' }),
 };
 

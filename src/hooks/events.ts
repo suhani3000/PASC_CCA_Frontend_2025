@@ -1,8 +1,7 @@
+import { useEffect, useState, useCallback } from "react";
+import { Event, EventWithRsvp } from "@/types/events";
+import { eventAPI } from "@/lib/api";
 
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { Event, EventFor, EventWithRsvp } from "@/types/events";
-import { apiUrl } from "@/lib/utils";
 function formatDateToDDMMYY(dateString: string): string {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -14,76 +13,66 @@ function formatDateToDDMMYY(dateString: string): string {
 
 export function useFetchEventsForAdmin() {
     const [fetchedEvents, setFetchedEvents] = useState<Event[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        let cancel = false;
-        const fetchEvents = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                let res;
-                const token = localStorage.getItem('token');
-                res = await axios.get(`${apiUrl}/events/`);
-                console.log(res.data.data.events);
-                const formattedEvents = (res.data.data.events || []).map((event: any) => ({
-                    ...event,
-                    startDate: formatDateToDDMMYY(event.startDate),
-                    endDate: formatDateToDDMMYY(event.endDate),
-                }));
-                setFetchedEvents(formattedEvents);
-            } catch (err) {
-                setError("Failed to fetch events");
-                setFetchedEvents([]);
-            } finally {
-                if (!cancel) setLoading(false);
-            }
-        };
-        fetchEvents();
-        return () => { cancel = true; };
+    const fetchEvents = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            // Use public events endpoint for admin dashboard
+            const res = await eventAPI.getAll();
+            const formattedEvents = (res.data.data?.events || []).map((event: any) => ({
+                ...event,
+                startDate: formatDateToDDMMYY(event.startDate),
+                endDate: formatDateToDDMMYY(event.endDate),
+            }));
+            setFetchedEvents(formattedEvents);
+        } catch (err) {
+            setError("Failed to fetch events");
+            setFetchedEvents([]);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    return { events: fetchedEvents, loading, error };
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
+
+    return { events: fetchedEvents, loading, error, refetchEvents: fetchEvents };
 }
 
 export function useFetchEventsForStudentRsvp() {
     const [fetchedEvents, setFetchedEvents] = useState<EventWithRsvp[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        let cancel = false;
-        const fetchEvents = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                let res;
-                const token = localStorage.getItem('token');
-                res = await axios.get(`${apiUrl}/events/user/`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                console.log(res.data.data);
-                const formattedEvents = (res.data.data || []).map((event: any) => ({
-                    ...event,
-                    startDate: formatDateToDDMMYY(event.startDate),
-                    endDate: formatDateToDDMMYY(event.endDate),
-                }));
-                setFetchedEvents(formattedEvents);
-            } catch (err) {
-                setError("Failed to fetch events");
-                console.log(err);
-                setFetchedEvents([]);
-            } finally {
-                if (!cancel) setLoading(false);
-            }
-        };
-        fetchEvents();
-        return () => { cancel = true; };
+    const fetchEvents = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            // Use user events endpoint - returns events with RSVP status
+            const res = await eventAPI.getUserEvents();
+            const formattedEvents = (res.data.data || []).map((event: any) => ({
+                ...event,
+                startDate: formatDateToDDMMYY(event.startDate),
+                endDate: formatDateToDDMMYY(event.endDate),
+            }));
+            setFetchedEvents(formattedEvents);
+        } catch (err) {
+            setError("Failed to fetch events");
+            console.error(err);
+            setFetchedEvents([]);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    return { events: fetchedEvents, loading, error };
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
+
+    return { events: fetchedEvents, loading, error, refetchEvents: fetchEvents };
 }
 

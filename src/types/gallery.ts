@@ -19,3 +19,4 @@ export interface GalleryResponse {
   error?: string;
 }
 
+

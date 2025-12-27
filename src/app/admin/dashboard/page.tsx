@@ -5,21 +5,21 @@ import { useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Users, Plus } from "lucide-react";
+import { Calendar, Users, Plus, BarChart3, Megaphone } from "lucide-react";
 import { StatsCard } from "@/components/admin/stats-card";
 import { EventsList } from "@/components/admin/event-list";
 import {  useFetchEventsForAdmin } from "@/hooks/events";
 import { Event, EventStatus } from "@/types/events";
 import axios from "axios";
-import { useAuthStore } from "@/lib/store";
 import { apiUrl } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("ALL EVENTS");
   const [studentCount, setStudentCount] = useState<number | null>(null);
   const [studentLoading, setStudentLoading] = useState(true);
   const [studentError, setStudentError] = useState<string | null>(null);
   const router = useRouter();
-  const { clearAuth } = useAuthStore();
 
   // Use the hook to fetch events
   const { events, loading, error } = useFetchEventsForAdmin();
@@ -45,60 +45,79 @@ const AdminDashboard = () => {
     fetchStudentCount();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `${apiUrl}/auth/admin/logout`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    } catch (e) {
-      // ignore error
-    }
-    clearAuth();
-    localStorage.removeItem("token");
-    router.push("/auth/login");
-  };
-
   // Calculate stats from fetched events
   const totalEvents = events.length;
   const activeEvents = events.filter(
     (event) => event.status === "ONGOING" || event.status === "UPCOMING"
   ).length;
 
-  if (loading) return <div>Loading events...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-5 w-96" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => <Skeleton key={i} className="h-32 w-full" />)}
+          </div>
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen p-6 flex items-center justify-center">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center max-w-md">
+          <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 bg-background">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-muted-foreground">
+            <h1 className="text-3xl font-bold text-foreground">
               Admin Dashboard
             </h1>
-            <p className="text-muted text-lg mt-1">
+            <p className="text-muted-foreground mt-1">
               Manage events, attendance, and student activities
             </p>
           </div>
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-wrap gap-2 items-center">
             <Button
-              size={"lg"}
-              className="bg-blue-500 text-lg self-end mt-3 md:mt-0 py-2 px-1 text-white hover:bg-blue-600"
-              onClick={() => router.push("/admin/createEvent")}
+              variant="outline"
+              onClick={() => router.push("/admin/analytics")}
+              className="flex items-center gap-2"
             >
-              <Plus className="h-6 w-6 mr-2" />
-              Create Event
+              <BarChart3 className="h-4 w-4" />
+              Analytics
             </Button>
             <Button
-              size={"lg"}
               variant="outline"
-              className="text-lg self-end mt-3 md:mt-0 py-2 px-4 border-red-500 text-red-600 hover:bg-red-100"
-              onClick={handleLogout}
+              onClick={() => router.push("/admin/announcements")}
+              className="flex items-center gap-2"
             >
-              Logout
+              <Megaphone className="h-4 w-4" />
+              Announcements
+            </Button>
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              onClick={() => router.push("/admin/createEvent")}
+            >
+              <Plus className="h-4 w-4" />
+              Create Event
             </Button>
           </div>
         </div>

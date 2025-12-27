@@ -23,6 +23,7 @@ export default function EventDetailsPage({
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
+  const [rsvpId, setRsvpId] = useState<number | null>(null);
   const [rsvpLoading, setRsvpLoading] = useState(false);
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function EventDetailsPage({
         const eventRsvp = rsvps.find((r: any) => r.eventId === id);
         if (eventRsvp) {
           setRsvpStatus(eventRsvp.status);
+          setRsvpId(eventRsvp.id);
         }
       }
     } catch (error) {
@@ -67,12 +69,16 @@ export default function EventDetailsPage({
   const handleRsvp = async () => {
     setRsvpLoading(true);
     try {
-      if (rsvpStatus === 'ATTENDING') {
-        await rsvpAPI.cancel(eventId);
+      if (rsvpStatus === 'ATTENDING' && rsvpId) {
+        await rsvpAPI.cancel(rsvpId);
         setRsvpStatus(null);
+        setRsvpId(null);
       } else {
-        await rsvpAPI.create(eventId);
-        setRsvpStatus('ATTENDING');
+        const response = await rsvpAPI.create(eventId);
+        if (response.data?.success && response.data.data) {
+          setRsvpStatus('ATTENDING');
+          setRsvpId(response.data.data.id);
+        }
       }
     } catch (error) {
       console.error('Error updating RSVP:', error);
@@ -231,4 +237,5 @@ export default function EventDetailsPage({
     </main>
   );
 }
+
 
