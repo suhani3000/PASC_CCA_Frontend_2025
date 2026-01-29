@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  Trophy, 
-  TrendingUp, 
-  Calendar, 
+import {
+  Trophy,
+  TrendingUp,
+  Calendar,
   Award,
   Clock,
   Target,
@@ -40,7 +40,7 @@ export default function StudentDashboard() {
   const fetchAttendanceData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/attendance/user-attendance-stats`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api'}/attendance/user-attendance-stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -68,9 +68,9 @@ export default function StudentDashboard() {
         });
       }
 
-      const leaderboardResponse = await leaderboardAPI.get({ 
-        period: 'SEMESTER', 
-        limit: 5 
+      const leaderboardResponse = await leaderboardAPI.get({
+        period: 'SEMESTER',
+        limit: 5
       });
       console.log('Leaderboard response:', leaderboardResponse.data);
       if (leaderboardResponse.data?.success && leaderboardResponse.data.data) {
@@ -123,7 +123,7 @@ export default function StudentDashboard() {
   return (
     <main className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -145,31 +145,28 @@ export default function StudentDashboard() {
           <nav className="flex gap-1" aria-label="Tabs">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`py-3 px-6 border-b-2 font-medium text-sm transition-all ${
-                activeTab === 'overview'
+              className={`py-3 px-6 border-b-2 font-medium text-sm transition-all ${activeTab === 'overview'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-              }`}
+                }`}
             >
               Overview
             </button>
             <button
               onClick={() => setActiveTab('attendance')}
-              className={`py-3 px-6 border-b-2 font-medium text-sm transition-all ${
-                activeTab === 'attendance'
+              className={`py-3 px-6 border-b-2 font-medium text-sm transition-all ${activeTab === 'attendance'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-              }`}
+                }`}
             >
               Attendance History
             </button>
             <button
               onClick={() => setActiveTab('achievements')}
-              className={`py-3 px-6 border-b-2 font-medium text-sm transition-all ${
-                activeTab === 'achievements'
+              className={`py-3 px-6 border-b-2 font-medium text-sm transition-all ${activeTab === 'achievements'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-              }`}
+                }`}
             >
               Achievements
             </button>
@@ -180,123 +177,122 @@ export default function StudentDashboard() {
         {activeTab === 'overview' && (
           <div className="space-y-6">
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            icon={<Award className="w-5 h-5 text-primary" />}
-            title="Total Credits"
-            value={stats.totalCredits.toString()}
-            loading={loading}
-          />
-          <StatCard
-            icon={<Calendar className="w-5 h-5 text-primary" />}
-            title="Events Attended"
-            value={stats.eventsAttended.toString()}
-            loading={loading}
-          />
-          <StatCard
-            icon={<Clock className="w-5 h-5 text-primary" />}
-            title="Upcoming Events"
-            value={stats.upcomingEvents.toString()}
-            loading={loading}
-          />
-          <StatCard
-            icon={<Target className="w-5 h-5 text-primary" />}
-            title="Completion Rate"
-            value={`${stats.completionRate}%`}
-            loading={loading}
-          />
-        </div>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard
+                icon={<Award className="w-5 h-5 text-primary" />}
+                title="Total Credits"
+                value={stats.totalCredits.toString()}
+                loading={loading}
+              />
+              <StatCard
+                icon={<Calendar className="w-5 h-5 text-primary" />}
+                title="Events Attended"
+                value={stats.eventsAttended.toString()}
+                loading={loading}
+              />
+              <StatCard
+                icon={<Clock className="w-5 h-5 text-primary" />}
+                title="Upcoming Events"
+                value={stats.upcomingEvents.toString()}
+                loading={loading}
+              />
+              <StatCard
+                icon={<Target className="w-5 h-5 text-primary" />}
+                title="Completion Rate"
+                value={`${stats.completionRate}%`}
+                loading={loading}
+              />
+            </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Leaderboard & Progress */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Your Rank Card */}
-            {userRank && (
-              <div className="bg-card border border-border rounded-xl p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-muted-foreground text-sm font-medium">Your Rank</p>
-                    <h2 className="text-4xl font-bold mt-1 text-foreground">#{userRank.rank}</h2>
-                    <p className="text-muted-foreground mt-2 text-sm">
-                      {userRank.credits} credits • {userRank.eventsAttended} events
-                    </p>
-                  </div>
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Trophy className="w-8 h-8 text-primary" />
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <Progress value={stats.completionRate} className="h-2" />
-                  <p className="text-muted-foreground text-xs mt-2">
-                    {stats.completionRate}% completion rate
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Top Performers */}
-            <div className="bg-card rounded-xl border border-border p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-foreground">Top Performers</h3>
-                <button
-                  onClick={() => router.push('/student/leaderboard')}
-                  className="text-sm text-primary hover:underline font-medium"
-                >
-                  View All →
-                </button>
-              </div>
-              
-              {loading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map(i => (
-                    <Skeleton key={i} className="h-16 w-full" />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {topPerformers.map((entry, index) => (
-                    <div
-                      key={entry.id}
-                      className="flex items-center gap-4 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors"
-                    >
-                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                        index === 0 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
-                        index === 1 ? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300' :
-                        index === 2 ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400' :
-                        'bg-muted text-muted-foreground'
-                      }`}>
-                        {entry.rank}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground truncate">
-                          {entry.user?.name || 'Anonymous'}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {entry.user?.department} • Year {entry.user?.year}
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column - Leaderboard & Progress */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Your Rank Card */}
+                {userRank && (
+                  <div className="bg-card border border-border rounded-xl p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-muted-foreground text-sm font-medium">Your Rank</p>
+                        <h2 className="text-4xl font-bold mt-1 text-foreground">#{userRank.rank}</h2>
+                        <p className="text-muted-foreground mt-2 text-sm">
+                          {userRank.credits} credits • {userRank.eventsAttended} events
                         </p>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-foreground">{entry.credits}</p>
-                        <p className="text-xs text-muted-foreground">credits</p>
+                      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Trophy className="w-8 h-8 text-primary" />
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+                    <div className="mt-4">
+                      <Progress value={stats.completionRate} className="h-2" />
+                      <p className="text-muted-foreground text-xs mt-2">
+                        {stats.completionRate}% completion rate
+                      </p>
+                    </div>
+                  </div>
+                )}
 
-          {/* Right Column - Announcements */}
-          <div className="lg:col-span-1">
-            <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-lg font-semibold mb-4 text-foreground">Announcements</h3>
-              <AnnouncementList />
+                {/* Top Performers */}
+                <div className="bg-card rounded-xl border border-border p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold text-foreground">Top Performers</h3>
+                    <button
+                      onClick={() => router.push('/student/leaderboard')}
+                      className="text-sm text-primary hover:underline font-medium"
+                    >
+                      View All →
+                    </button>
+                  </div>
+
+                  {loading ? (
+                    <div className="space-y-3">
+                      {[1, 2, 3].map(i => (
+                        <Skeleton key={i} className="h-16 w-full" />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {topPerformers.map((entry, index) => (
+                        <div
+                          key={entry.id}
+                          className="flex items-center gap-4 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors"
+                        >
+                          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${index === 0 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
+                              index === 1 ? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300' :
+                                index === 2 ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400' :
+                                  'bg-muted text-muted-foreground'
+                            }`}>
+                            {entry.rank}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-foreground truncate">
+                              {entry.user?.name || 'Anonymous'}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {entry.user?.department} • Year {entry.user?.year}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold text-foreground">{entry.credits}</p>
+                            <p className="text-xs text-muted-foreground">credits</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column - Announcements */}
+              <div className="lg:col-span-1">
+                <div className="bg-card rounded-xl border border-border p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-foreground">Announcements</h3>
+                  <AnnouncementList />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        </div>
         )}
 
         {/* ATTENDANCE TAB */}

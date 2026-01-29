@@ -15,15 +15,15 @@ const Navbar = () => {
   const pathname = usePathname();
   const role = useAuthStore((state) => state.role);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { clearAuth } = useAuthStore();
   const user = useAuthStore((state) => state.user);
   const admin = useAuthStore((state) => state.admin);
-  
+
   // Determine if user is actually logged in (has token and user/admin data)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!(token && (user || admin)));
@@ -36,7 +36,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/auth/user/logout`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api'}/auth/user/logout`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -78,44 +78,40 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-1">
             <Link
               href="/student/dashboard"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                isActive("/student/dashboard")
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isActive("/student/dashboard")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
             </Link>
             <Link
               href="/student/events"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                isActive("/student/events")
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isActive("/student/events")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <Calendar className="w-4 h-4" />
               Events
             </Link>
             <Link
               href="/student/leaderboard"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                isActive("/student/leaderboard")
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isActive("/student/leaderboard")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <Trophy className="w-4 h-4" />
               Leaderboard
             </Link>
             <Link
               href="/student/announcements"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                isActive("/student/announcements")
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isActive("/student/announcements")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <Bell className="w-4 h-4" />
               Announcements
@@ -127,22 +123,20 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-1">
             <Link
               href="/admin/dashboard"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                isActive("/admin/dashboard")
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isActive("/admin/dashboard")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
             </Link>
             <Link
               href="/admin/events"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                isActive("/admin/events")
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isActive("/admin/events")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <Calendar className="w-4 h-4" />
               Events
@@ -167,7 +161,7 @@ const Navbar = () => {
           )}
 
           <ThemeSwitcher />
-          
+
           {/* Notification Bell - only show when logged in */}
           {isLoggedIn && <NotificationBell />}
 
@@ -273,11 +267,10 @@ const Navbar = () => {
             <Link
               href="/student/dashboard"
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive("/student/dashboard")
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive("/student/dashboard")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <LayoutDashboard className="w-5 h-5" />
               Dashboard
@@ -285,11 +278,10 @@ const Navbar = () => {
             <Link
               href="/student/events"
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive("/student/events")
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive("/student/events")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <Calendar className="w-5 h-5" />
               Events
@@ -297,11 +289,10 @@ const Navbar = () => {
             <Link
               href="/student/leaderboard"
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive("/student/leaderboard")
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive("/student/leaderboard")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <Trophy className="w-5 h-5" />
               Leaderboard
@@ -309,11 +300,10 @@ const Navbar = () => {
             <Link
               href="/student/announcements"
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive("/student/announcements")
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive("/student/announcements")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <Bell className="w-5 h-5" />
               Announcements
@@ -328,11 +318,10 @@ const Navbar = () => {
             <Link
               href="/admin/dashboard"
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive("/admin/dashboard")
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive("/admin/dashboard")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <LayoutDashboard className="w-5 h-5" />
               Dashboard
@@ -340,11 +329,10 @@ const Navbar = () => {
             <Link
               href="/admin/events"
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive("/admin/events")
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive("/admin/events")
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+                }`}
             >
               <Calendar className="w-5 h-5" />
               Events

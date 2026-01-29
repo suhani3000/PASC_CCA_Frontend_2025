@@ -6,39 +6,39 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export   const getStatusColor = (status: Event['status']) => {
-    switch (status) {
-      case 'Upcoming':
-        return 'text-blue-600';
-      case 'Ongoing':
-        return 'text-green-600';
-      case 'Completed':
-        return 'text-gray-600';
-      default:
-        return 'text-gray-600';
-    }
+export const getStatusColor = (status: Event['status']) => {
+  switch (status) {
+    case 'Upcoming':
+      return 'text-blue-600';
+    case 'Ongoing':
+      return 'text-green-600';
+    case 'Completed':
+      return 'text-gray-600';
+    default:
+      return 'text-gray-600';
   }
+}
 
 
 export const getStatusBadgeVariant = (status: Event['status']) => {
-    switch (status) {
-      case 'Upcoming':
-        return 'default';
-      case 'Ongoing':
-        return 'secondary';
-      case 'Completed':
-        return 'outline';
-      default:
-        return 'default';
-    }
-  };
+  switch (status) {
+    case 'Upcoming':
+      return 'default';
+    case 'Ongoing':
+      return 'secondary';
+    case 'Completed':
+      return 'outline';
+    default:
+      return 'default';
+  }
+};
 
-export const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+export const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
 
 // Date formatting utilities
 export function formatDistanceToNow(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-  
+
   if (seconds < 60) return 'just now';
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
@@ -49,18 +49,18 @@ export function formatDistanceToNow(date: Date): string {
 
 export function formatDate(date: Date | string): string {
   const d = new Date(date);
-  return d.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
   });
 }
 
 export function formatDateTime(date: Date | string): string {
   const d = new Date(date);
-  return d.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
