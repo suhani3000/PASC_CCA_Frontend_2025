@@ -170,6 +170,9 @@ export const attendanceAPI = {
 
   getEventSessions: (eventId: number) =>
     api.get(`attendance/events/${eventId}/sessions`),
+
+  exportEventSessions: (eventId: number) =>
+    api.get(`attendance/events/${eventId}/sessions/export`, { responseType: 'blob' }),
 };
 
 // Review APIs
