@@ -52,6 +52,13 @@ export const EventCard = ({ eventWithRsvp }: { eventWithRsvp: EventWithRsvp }) =
 
   const event = eventWithRsvp.event;
   const getRSVPButton = () => {
+    if (event.status === 'COMPLETED') {
+      return (
+        <Button disabled className="flex-1 bg-gray-200 text-gray-500 cursor-not-allowed">
+          Completed
+        </Button>
+      );
+    }
     if (eventWithRsvp.rsvp) {
       return (
         <Button variant="outline" className="flex-1 border-none"

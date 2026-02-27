@@ -147,9 +147,9 @@ export default function EventDetailPage({
         <div className="lg:col-span-2 space-y-6">
           {/* Event Title Card */}
           <Card className="border-none shadow-sm hover:shadow-lg transition-shadow duration-200">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <CardTitle className="text-2xl font-bold text-gray-900">
+            <CardHeader className="w-full overflow-hidden">
+              <div className="flex items-start justify-between flex-wrap gap-4">
+                <CardTitle className="text-2xl font-bold text-gray-900 break-words max-w-full">
                   {eventDetails?.title}
                 </CardTitle>
                 <Badge
@@ -159,9 +159,11 @@ export default function EventDetailPage({
                   {eventDetails?.status}
                 </Badge>
               </div>
-              <p className="text-gray-600 leading-relaxed mt-4">
-                {eventDetails?.description}
-              </p>
+              <div className="w-full overflow-hidden pt-4">
+                <p className="text-gray-600 leading-relaxed whitespace-pre-wrap break-words w-full">
+                  {eventDetails?.description}
+                </p>
+              </div>
             </CardHeader>
           </Card>
 
@@ -218,7 +220,14 @@ export default function EventDetailPage({
                       {/* Mark Attendance Button */}
                       {session.isActive && (
                         <div className="mt-4">
-                          {session.attended ? (
+                          {eventDetails?.status === 'COMPLETED' ? (
+                            <Button
+                              className="w-full bg-gray-400 text-white font-semibold cursor-not-allowed"
+                              disabled
+                            >
+                              Event Completed
+                            </Button>
+                          ) : session.attended ? (
                             <Button
                               className="w-full bg-green-400 text-white font-semibold"
                               disabled

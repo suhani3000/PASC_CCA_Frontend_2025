@@ -263,10 +263,34 @@ const AttendanceManagement: React.FC = () => {
     });
   };
 
-  const handleExport = () => {
-    const activeSessionData = sessions.find((s) => s.id === activeSession);
-    console.log('Exporting attendance data for:', activeSessionData?.sessionName);
-    // TODO: Add actual export logic
+  const handleExport = async () => {
+    try {
+      const response = await attendanceAPI.exportEventSessions(Number(eventId));
+
+      // Extract filename from Content-Disposition header if available
+      let filename = `attendance_sessions_${eventId}.xlsx`;
+      const disposition = response.headers['content-disposition'];
+      if (disposition && disposition.indexOf('filename=') !== -1) {
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(disposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, '');
+        }
+      }
+
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting sessions:', error);
+      alert('Failed to export sessions. Please try again.');
+    }
   };
 
   const handleUpdateSession = async (session: Session) => {
@@ -311,13 +335,22 @@ const AttendanceManagement: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Select Session</h2>
-            <button
-              onClick={handleOpenAddModal}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Session
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleExport}
+                className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export Excel
+              </button>
+              <button
+                onClick={handleOpenAddModal}
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Session
+              </button>
+            </div>
           </div>
           {sessions.length === 0 ? (
             <div className="text-center text-gray-500 py-12">
@@ -444,13 +477,6 @@ const AttendanceManagement: React.FC = () => {
                     />
                   </button>
                 </div>
-                <button
-                  onClick={handleExport}
-                  className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Export
-                </button>
               </div>
             </div>
 
