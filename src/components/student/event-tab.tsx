@@ -12,8 +12,12 @@ export const EventsTab = ({ eventsWithRsvp }: { eventsWithRsvp: EventWithRsvp[] 
   const filterEvents = (status?: string) => {
     let filtered = eventsWithRsvp;
 
-    // Filter by status
-    if (status && status !== "all-events") {
+    // Filter by RSVP status ("My Events")
+    if (status === "my-events") {
+      filtered = filtered.filter(e => e.rsvp !== null && e.rsvp !== undefined);
+    }
+    // Filter by status for other tabs
+    else if (status && status !== "all-events") {
       filtered = filtered.filter(e => e.event.status === status.toUpperCase());
     }
 
@@ -87,28 +91,34 @@ export const EventsTab = ({ eventsWithRsvp }: { eventsWithRsvp: EventWithRsvp[] 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         {/* Full width tabs container with gray background */}
         <div className="w-full rounded-lg p-1 mb-6">
-          <TabsList className="w-full h-auto p-3 flex justify-between items-center bg-gray-100 rounded-lg flex-wrap">
+          <TabsList className="w-full h-auto p-3 flex justify-between items-center bg-gray-100 rounded-lg flex-wrap gap-2">
             <TabsTrigger
               value="all-events"
-              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200"
+              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200 flex-1 whitespace-nowrap"
             >
               All Events
             </TabsTrigger>
             <TabsTrigger
+              value="my-events"
+              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200 flex-1 whitespace-nowrap"
+            >
+              My Events
+            </TabsTrigger>
+            <TabsTrigger
               value="upcoming"
-              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200"
+              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200 flex-1 whitespace-nowrap"
             >
               Upcoming
             </TabsTrigger>
             <TabsTrigger
               value="ongoing"
-              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200"
+              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200 flex-1 whitespace-nowrap"
             >
               Ongoing
             </TabsTrigger>
             <TabsTrigger
               value="completed"
-              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200"
+              className="text-sm py-1.5 px-4 rounded-md data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 hover:text-gray-900 transition-all duration-200 flex-1 whitespace-nowrap"
             >
               Completed
             </TabsTrigger>
@@ -116,6 +126,9 @@ export const EventsTab = ({ eventsWithRsvp }: { eventsWithRsvp: EventWithRsvp[] 
         </div>
         <TabsContent value="all-events" className="mt-0">
           {getTabContent('all-events')}
+        </TabsContent>
+        <TabsContent value="my-events" className="mt-0">
+          {getTabContent('my-events')}
         </TabsContent>
         <TabsContent value="upcoming" className="mt-0">
           {getTabContent('upcoming')}
